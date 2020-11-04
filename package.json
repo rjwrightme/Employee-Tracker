@@ -1,0 +1,23 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "CLI tool for managing employees",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjwrightme/Employee-Tracker.git"
+  },
+  "author": "RJ Wright",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rjwrightme/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/rjwrightme/Employee-Tracker#readme",
+  "dependencies": {
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
