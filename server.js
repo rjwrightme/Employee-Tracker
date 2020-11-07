@@ -31,18 +31,11 @@ function startApp() {
                 choices: [
                   "View > All Employees",
                   "View > By Department",
-                  "View > By Manager",
                   "View > All Roles",
-                  "View > Utilised Budget",
                   "Employee > Add",
-                  "Employee > Remove",
                   "Employee > Update Role",
-                  "Employee > Update Manager",
                   "Department > Add",
-                  "Department > Remove",
-                  "Department > Update",
                   "Roles > Add",
-                  "Roles > Remove",
                   "Roles > Update"],
             }
         ])
@@ -50,6 +43,12 @@ function startApp() {
             switch (answer.action) {
                 case "View > All Employees":
                     viewEmployees();
+                    break;
+                case "View > By Department":
+                    viewByDeparment();
+                    break;
+                case "View > All Roles":
+                    viewRoles();
                     break;
             }
         })
@@ -94,35 +93,92 @@ function viewEmployees() {
         }
         console.log("\n");
         console.table(employees);
+        startApp();
         });
-    startApp();
 }
 
 function viewByDeparment() {
-    inquirer
-        .prompt([
-
-        ])
-        .then ()
-        .catch( error => console.error(error) );
-}
-
-function viewByManager() {
-    inquirer
-        .prompt([
-
-        ])
-        .then ()
-        .catch( error => console.error(error) );
+    const query = "SELECT department FROM departments";
+      connection.query(query, function(err, res) {
+        if (err) {
+            console.log(err);
+        }
+        const departments = res.map(obj => obj.department);
+        inquirer
+            .prompt([
+                {
+                    type: "rawlist",
+                    name: "department",
+                    message: "Select Department",
+                    choices: departments
+                }
+            ])
+            .then ( answer => {
+                const query = "SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id JOIN departments ON roles.department_id=departments.department_id WHERE ? ORDER BY employee_id";
+                connection.query(query, { department: answer.department }, function(err, res) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    let employees = [];
+                    for (let i = 0; i < res.length; i++) {
+                        let employee = {
+                            "ID": res[i].employee_id,
+                            "Name": res[i].first_name + " " + res[i].last_name,
+                            "Title": res[i].title,
+                            "Department": res[i].department,
+                            "Salary": res[i].salary,
+                        }
+                        employees.push(employee);
+                    }
+                    console.log("\n");
+                    console.table(employees);
+                    startApp();
+                });
+            })
+            .catch( error => console.error(error) );
+        });
 }
 
 function viewRoles() {
-    inquirer
-        .prompt([
-
-        ])
-        .then ()
-        .catch( error => console.error(error) );
+    const query = "SELECT title FROM roles";
+      connection.query(query, function(err, res) {
+        if (err) {
+            console.log(err);
+        }
+        const roles = res.map(obj => obj.title);
+        inquirer
+            .prompt([
+                {
+                    type: "rawlist",
+                    name: "role",
+                    message: "Select Role",
+                    choices: roles
+                }
+            ])
+            .then ( answer => {
+                const query = "SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id JOIN departments ON roles.department_id=departments.department_id WHERE ? ORDER BY employee_id";
+                connection.query(query, { title: answer.role }, function(err, res) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    let employees = [];
+                    for (let i = 0; i < res.length; i++) {
+                        let employee = {
+                            "ID": res[i].employee_id,
+                            "Name": res[i].first_name + " " + res[i].last_name,
+                            "Title": res[i].title,
+                            "Department": res[i].department,
+                            "Salary": res[i].salary,
+                        }
+                        employees.push(employee);
+                    }
+                    console.log("\n");
+                    console.table(employees);
+                    startApp();
+                });
+            })
+            .catch( error => console.error(error) );
+        });
 }
 
 function addRole() {

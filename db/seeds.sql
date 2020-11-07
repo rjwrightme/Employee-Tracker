@@ -6,7 +6,7 @@ VALUES ("Marketing"), ("Engineering"), ("Finance");
 
 -- Roles
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Chief Techincal Officer', '125,000', department_id
+SELECT 'Chief Techincal Officer', '$125,000', department_id
   FROM departments
  WHERE department = 'Engineering'
  LIMIT 1;
