@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql");
 const logo = require('asciiart-logo');
 const config = require('./package.json');
+const cTable = require('console.table');
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -74,25 +75,25 @@ function removeEmployee() {
 }
 
 function viewEmployees() {
-    const query = "SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id JOIN department ON roles.department_id=department.id";
+    const query = "SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id JOIN departments ON roles.department_id=departments.department_id ORDER BY employee_id";
       connection.query(query, function(err, res) {
         if (err) {
             console.log(err);
         }
-        console.log(res);
-        // let employees = [];
-        // for (let i = 0; i < res.length; i++) {
-        //     let employee = {
-        //         "ID": res[i].employee_id,
-        //         "Name": res[i].first_name + " " + res[i].last_name,
-        //         "Title": ,
-        //         "Department": ,
-        //         "Salary": ,
-        //         "Manager"
-
-        //     }
-        // }
-        // console.table(employees);
+        let employees = [];
+        for (let i = 0; i < res.length; i++) {
+            let employee = {
+                "ID": res[i].employee_id,
+                "Name": res[i].first_name + " " + res[i].last_name,
+                "Title": res[i].title,
+                "Department": res[i].department,
+                "Salary": res[i].salary,
+                "Manager": res[i].manager_id ? res[(res[i].manager_id) - 1].first_name + " " + res[(res[i].manager_id) - 1].last_name : null
+            }
+            employees.push(employee);
+        }
+        console.log("\n");
+        console.table(employees);
         });
     startApp();
 }

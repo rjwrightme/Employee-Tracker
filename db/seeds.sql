@@ -1,62 +1,62 @@
 USE employee_tracker;
 
 -- Departments
-INSERT INTO department (name)
+INSERT INTO departments (department)
 VALUES ("Marketing"), ("Engineering"), ("Finance");
 
 -- Roles
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Chief Techincal Officer', '125,000', id
-  FROM department
- WHERE name = 'Engineering'
+SELECT 'Chief Techincal Officer', '125,000', department_id
+  FROM departments
+ WHERE department = 'Engineering'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Full Stack Developer', '$100,000', id
-  FROM department
- WHERE name = 'Engineering'
+SELECT 'Full Stack Developer', '$100,000', department_id
+  FROM departments
+ WHERE department = 'Engineering'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Front End Developer', '$65,000', id
-  FROM department
- WHERE name = 'Engineering'
+SELECT 'Front End Developer', '$65,000', department_id
+  FROM departments
+ WHERE department = 'Engineering'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Chief Marketing Officer', '$80,000', id
-  FROM department
- WHERE name = 'Marketing'
+SELECT 'Chief Marketing Officer', '$80,000', department_id
+  FROM departments
+ WHERE department = 'Marketing'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Marketing Analyst', '$60,000', id
-  FROM department
- WHERE name = 'Marketing'
+SELECT 'Marketing Analyst', '$60,000', department_id
+  FROM departments
+ WHERE department = 'Marketing'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Marketing Specialist', '$50,000', id
-  FROM department
- WHERE name = 'Marketing'
+SELECT 'Marketing Specialist', '$50,000', department_id
+  FROM departments
+ WHERE department = 'Marketing'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Chief Financial Officer', '$135,000', id
-  FROM department
- WHERE name = 'Finance'
+SELECT 'Chief Financial Officer', '$135,000', department_id
+  FROM departments
+ WHERE department = 'Finance'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Senior Accountant', '$85,000', id
-  FROM department
- WHERE name = 'Finance'
+SELECT 'Senior Accountant', '$85,000', department_id
+  FROM departments
+ WHERE department = 'Finance'
  LIMIT 1;
 
 INSERT INTO roles (title, salary, department_id)
-SELECT 'Junior Accountant', '$55,000', id
-  FROM department
- WHERE name = 'Finance'
+SELECT 'Junior Accountant', '$55,000', department_id
+  FROM departments
+ WHERE department = 'Finance'
  LIMIT 1;
 
 -- Employees

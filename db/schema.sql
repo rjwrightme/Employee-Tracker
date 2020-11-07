@@ -3,10 +3,10 @@ CREATE database employee_tracker;
 
 USE employee_tracker;
 
-CREATE TABLE department (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(30) NOT NULL,
-  PRIMARY KEY (id)
+CREATE TABLE departments (
+  department_id INT NOT NULL AUTO_INCREMENT,
+  department VARCHAR(30) NOT NULL,
+  PRIMARY KEY (department_id)
 );
 
 CREATE TABLE roles (
@@ -15,7 +15,7 @@ CREATE TABLE roles (
   salary VARCHAR(100),
   department_id INT,
   PRIMARY KEY (role_id),
-  FOREIGN KEY (department_id) REFERENCES department(id)
+  FOREIGN KEY (department_id) REFERENCES departments(department_id)
 );
 
 CREATE TABLE employees (
