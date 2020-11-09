@@ -71,28 +71,28 @@ const getManagersArray = () => {
                 console.log(error);
                 reject(error);
             }
-            resolve(response.map(manager => manager.name));
+            resolve(response);
         })
     });
 }
 
 const getRolesArray = () => {
-    const query = `SELECT title FROM roles`;
+    const query = `SELECT role_id, title FROM roles`;
     return new Promise((resolve, reject) => {
         connection.query(query, (error, response) => {
             if (error) {
                 console.log(error);
                 reject(error);
             }
-            resolve(response.map(role => role.title));
+            resolve(response);
         })
     });
 }
 
 
 async function addEmployee() {
-    const rolesArray = await getRolesArray();
-    const managerArray = await getManagersArray();
+    const rolesObject = await getRolesArray();
+    const managerObject = await getManagersArray();
     inquirer
         .prompt([
             {
@@ -107,9 +107,9 @@ async function addEmployee() {
             },
             {
                 type: "rawlist",
-                name: "role_id",
+                name: "role_title",
                 message: "Select Position",
-                choices: rolesArray
+                choices: rolesObject.map(role => role.title)
             },
             {
                 type: "confirm",
@@ -121,12 +121,31 @@ async function addEmployee() {
                 type: "rawlist",
                 name: "manager_name",
                 message: "Please select their manager:",
-                choices: managerArray,
+                choices: managerObject.map(manager => manager.name),
                 when: (answers) => answers.manager_bool
-            },
+            }
             
         ])
-        .then ()
+        .then ((answers) => {
+            // if (answers.manager_bool) {
+            //     const { employee_id: manager_id } = managerObject.find( ({name}) => name === answers.manager_name);
+            // } else {
+            //     const manager_id = "NULL";
+            // }
+            const { employee_id: manager_id } = managerObject.find( ({name}) => name === answers.manager_name);
+            const { role_id } = rolesObject.find( ({title}) => title === answers.role_title );
+            connection.query(
+                "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+                [answers.first_name, answers.last_name, role_id, manager_id],
+                (error, response) => {
+                  if (error) {
+                    console.error(error);
+                  }
+                  console.log(`${answers.first_name} ${answers.last_name} successfully added as a new employee.`);
+                  startApp();
+                }
+              );
+        })
         .catch( error => console.error(error) );
 }
 
