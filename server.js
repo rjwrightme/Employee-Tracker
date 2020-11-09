@@ -34,6 +34,7 @@ function startApp() {
                   "View > All Roles",
                   "Employee > Add",
                   "Employee > Update Role",
+                  "Employee > Remove",
                   "Department > Add",
                   "Roles > Add",
                   "Roles > Update"],
@@ -52,6 +53,10 @@ function startApp() {
                     break;
                 case "Employee > Add":
                     addEmployee();
+                    break;
+                case "Employee > Remove":
+                    removeEmployee();
+                    break;
             }
         })
         .catch( error => console.error(error) );
@@ -62,6 +67,19 @@ function startApp() {
 ****************************/
 
 // Get List of Managers
+
+const getEmployeesArray = () => {
+    const query = `SELECT employee_id, CONCAT(first_name, " ", last_name) AS name FROM employees`;
+    return new Promise((resolve, reject) => {
+        connection.query(query, (error, response) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            }
+            resolve(response);
+        })
+    });
+}
 
 const getManagersArray = () => {
     const query = `SELECT employee_id, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE ISNULL(manager_id)`;
@@ -127,12 +145,7 @@ async function addEmployee() {
             
         ])
         .then ((answers) => {
-            // if (answers.manager_bool) {
-            //     const { employee_id: manager_id } = managerObject.find( ({name}) => name === answers.manager_name);
-            // } else {
-            //     const manager_id = "NULL";
-            // }
-            const { employee_id: manager_id } = managerObject.find( ({name}) => name === answers.manager_name);
+            const manager_id = answers.manager_bool? managerObject.find( ({name}) => name === answers.manager_name).employee_id : null;
             const { role_id } = rolesObject.find( ({title}) => title === answers.role_title );
             connection.query(
                 "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
@@ -149,12 +162,31 @@ async function addEmployee() {
         .catch( error => console.error(error) );
 }
 
-function removeEmployee() {
+async function removeEmployee() {
+    const employeesObject = await getEmployeesArray();
     inquirer
         .prompt([
-
+            {
+                type: "rawlist",
+                name: "employee_name",
+                message: "Please select name of employee to remove",
+                choices: employeesObject.map(employee => employee.name)
+            }
         ])
-        .then ()
+        .then ((answer) => {
+            const { employee_id } = employeesObject.find( ({name}) => name === answer.employee_name);
+            connection.query(
+                "DELETE FROM employees WHERE employee_id=?",
+                [employee_id],
+                function (error, response) {
+                  if (error) {
+                    console.error(error);
+                  }
+                  console.log(`You have succesfully removed ${answer.employee_name} from the database.`);
+                  startApp();
+                }
+              );
+        })
         .catch( error => console.error(error) );
 }
 
