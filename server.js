@@ -50,15 +50,81 @@ function startApp() {
                 case "View > All Roles":
                     viewRoles();
                     break;
+                case "Employee > Add":
+                    addEmployee();
             }
         })
         .catch( error => console.error(error) );
 }
 
-function addEmployee() {
+/****************************
+    SQL Query Functions for Inquirer
+****************************/
+
+// Get List of Managers
+
+const getManagersArray = () => {
+    const query = `SELECT employee_id, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE ISNULL(manager_id)`;
+    return new Promise((resolve, reject) => {
+        connection.query(query, (error, response) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            }
+            resolve(response.map(manager => manager.name));
+        })
+    });
+}
+
+const getRolesArray = () => {
+    const query = `SELECT title FROM roles`;
+    return new Promise((resolve, reject) => {
+        connection.query(query, (error, response) => {
+            if (error) {
+                console.log(error);
+                reject(error);
+            }
+            resolve(response.map(role => role.title));
+        })
+    });
+}
+
+
+async function addEmployee() {
+    const rolesArray = await getRolesArray();
+    const managerArray = await getManagersArray();
     inquirer
         .prompt([
-
+            {
+                type: "input",
+                name: "first_name",
+                message: "What is the new employee's first name?"
+            },
+            {
+                type: "input",
+                name: "last_name",
+                message: "What is their last name?"
+            },
+            {
+                type: "rawlist",
+                name: "role_id",
+                message: "Select Position",
+                choices: rolesArray
+            },
+            {
+                type: "confirm",
+                name: "manager_bool",
+                message: "Does this employee have a manager?",
+                default: "true"
+            },
+            {
+                type: "rawlist",
+                name: "manager_name",
+                message: "Please select their manager:",
+                choices: managerArray,
+                when: (answers) => answers.manager_bool
+            },
+            
         ])
         .then ()
         .catch( error => console.error(error) );
